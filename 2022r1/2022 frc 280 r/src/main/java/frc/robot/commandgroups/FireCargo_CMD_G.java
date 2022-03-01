@@ -4,20 +4,16 @@
 
 package frc.robot.commandgroups;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.index.IndexRun_CMD;
-import frc.robot.commands.intake.IntakeRun_CMD;
-import frc.robot.subsystems.Index_SUB;
-import frc.robot.subsystems.Intake_SUB;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PickupCargo_CMD_G extends ParallelCommandGroup {
-  /** Creates a new PickupCargo_CMDGRP. */
-  public PickupCargo_CMD_G(Index_SUB index, Intake_SUB intake) {
+public class FireCargo_CMD_G extends SequentialCommandGroup {
+  /** Creates a new FireCargo_CMD_G. */
+  public FireCargo_CMD_G() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new IndexRun_CMD(index), new IntakeRun_CMD(intake));
+    addCommands();
   }
 }
