@@ -4,12 +4,14 @@
 
 package frc.robot.commands.shooter;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter_SUB;
 
 public class SpinFlywheelDis_CMD extends CommandBase {
   private final Shooter_SUB shooter;
-  double s_speed;
+  private Color colormatched;
+
   /** Creates a new SpinFlywheel_CMD. */
   public SpinFlywheelDis_CMD(Shooter_SUB m_shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -23,7 +25,12 @@ public class SpinFlywheelDis_CMD extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.SpinFlywheel(Shooter_SUB.disspeed);
+    if (shooter.isMyAllianceColor(colormatched)){
+    shooter.SetFlywheelVelocityControl(Shooter_SUB.distanceSpeed);
+    }
+    else {
+      shooter.SpinFlywheel(.2); //FIXME fix the speed after testing
+    }
   }
 
   // Called once the command ends or is interrupted.

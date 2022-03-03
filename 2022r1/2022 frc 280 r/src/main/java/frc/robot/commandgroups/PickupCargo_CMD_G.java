@@ -18,6 +18,9 @@ public class PickupCargo_CMD_G extends ParallelCommandGroup {
   public PickupCargo_CMD_G(Index_SUB index, Intake_SUB intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new IndexRun_CMD(index), new IntakeRun_CMD(intake));
+    addCommands(
+      new IndexRun_CMD(index), 
+      new IntakeRun_CMD(intake)
+      );
   }
 }

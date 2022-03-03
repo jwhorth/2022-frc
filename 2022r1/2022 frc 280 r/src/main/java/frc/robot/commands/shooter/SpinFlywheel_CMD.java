@@ -5,11 +5,16 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Shooter_SUB;
 
 public class SpinFlywheel_CMD extends CommandBase {
+  private final Shooter_SUB shooter;
+  double s_speed;
   /** Creates a new SpinFlywheel_CMD. */
-  public SpinFlywheel_CMD() {
+  public SpinFlywheel_CMD(Shooter_SUB m_shooter, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
+    s_speed = speed;
+    shooter = m_shooter;
   }
 
   // Called when the command is initially scheduled.
@@ -18,7 +23,9 @@ public class SpinFlywheel_CMD extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    shooter.SpinFlywheel(s_speed);
+  }
 
   // Called once the command ends or is interrupted.
   @Override

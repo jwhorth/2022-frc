@@ -5,11 +5,14 @@
 package frc.robot.commands.turret;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Shooter_SUB;
 
 public class TrackTarget_CMD extends CommandBase {
+  private final Shooter_SUB shooter;
   /** Creates a new TrackTarget_CMD. */
-  public TrackTarget_CMD() {
+  public TrackTarget_CMD(Shooter_SUB m_shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
+    shooter = m_shooter;
   }
 
   // Called when the command is initially scheduled.
@@ -18,7 +21,9 @@ public class TrackTarget_CMD extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    //shooter.track(); FIXME FIX when we fix the code in the sub
+  }
 
   // Called once the command ends or is interrupted.
   @Override

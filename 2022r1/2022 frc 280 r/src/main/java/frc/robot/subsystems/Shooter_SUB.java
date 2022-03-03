@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import javax.lang.model.util.ElementScanner6;
+import javax.swing.plaf.TreeUI;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -21,15 +24,14 @@ import com.revrobotics.ColorSensorV3;
 import frc.robot.Constants;
 
 public class Shooter_SUB extends SubsystemBase {
-  WPI_TalonFX LeftSideFly = new WPI_TalonFX(0); //FIXME change all the numbers for the motor functions
-  WPI_TalonFX RightSideFly = new WPI_TalonFX(0); 
+  WPI_TalonFX Flywheel = new WPI_TalonFX(0); //FIXME Change ID Numbers
   WPI_TalonFX Rotation = new WPI_TalonFX(0);
   WPI_TalonSRX Feedmotor = new WPI_TalonSRX(0);
   
 
   Joystick ButtonBoard = new Joystick(5);
 
-  //double turretP = Constants.TURRET_P; FIXME
+  //double turretP = Constants.TURRET_P; FIXME PIDS
   //double turretD = Constants.TURRET_D;
   //PIDController turretPIDController = new PIDController(turretP, 0, turretD);
 
@@ -50,6 +52,8 @@ public class Shooter_SUB extends SubsystemBase {
 
   public boolean readyToFire;
 
+  public static int ballCount;
+  public static double disspeed; //FIXME define disspeed using the trig thing
 
   boolean wasHomeFound = false;
   
@@ -71,13 +75,11 @@ public class Shooter_SUB extends SubsystemBase {
   public Shooter_SUB() {
     configureColorMatcher();
     alliance = DriverStation.getAlliance();
-    LeftSideFly.follow(RightSideFly);
-    LeftSideFly.setInverted(InvertType.OpposeMaster);
     
-    RightSideFly.config_kP(0, flywheelP);
-    RightSideFly.config_kI(0, flywheelI);
-    RightSideFly.config_kD(0, flywheelD);
-    RightSideFly.config_kF(0, flywheelF);
+    Flywheel.config_kP(0, flywheelP);
+    Flywheel.config_kI(0, flywheelI);
+    Flywheel.config_kD(0, flywheelD);
+    Flywheel.config_kF(0, flywheelF);
     /*
     Rotation.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
     Rotation.getAlternateEncoder(FeedbackDevice.CTRE_MagEncoder_Absolute), countsPerRev)
@@ -92,17 +94,17 @@ public class Shooter_SUB extends SubsystemBase {
 
 
 
-public double Flywheelspeed() {
-  return RightSideFly.getSelectedSensorVelocity();
+public double FlyWheelspeed() {
+  return Flywheel.getSelectedSensorVelocity();
 }
 
-public void spinFylywheel(double speed) {
-  RightSideFly.set(speed);
+public void SpinFlywheel(double speed) {
+  Flywheel.set(speed);
 }
 
 
-public void setFlywheelVelocityControl(double rpm) {
-  RightSideFly.set(ControlMode.Velocity, rpm);
+public void SetFlywheelVelocityControl(double rpm) {
+  Flywheel.set(ControlMode.Velocity, rpm);
 
 }
 
@@ -148,16 +150,9 @@ public void hardStopConfiguration() {   //FIXME Replace with the new functions f
 
 
 //Feed Motor CMDs
-  public void startPASS() {
-    Feedmotor.set(1);
-  }
-  //
-  public void stopPASS() {
-    Feedmotor.set(0);
-  }
-//
-
-
+public void feedMotorSpeed(double speed){
+  Feedmotor.set(speed);
+}
 
   // Tracking CMDs
 
@@ -238,6 +233,7 @@ public Color matchColor() {
   }
 }
 
+
 public double getColorSensorProxmity() {
   return m_colorSensor.getProximity();
 }
@@ -251,59 +247,15 @@ public double getColorSensorProxmity() {
     //hardStopConfiguration();
     turretCurrentPos = Rotation.getSelectedSensorPosition();  //FIXME Replace with the new functions for CANcoder
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-    System.out.println(Flywheelspeed());
+    System.out.println(FlyWheelspeed());
 
 
-    if(Flywheelspeed() > 19000){
+    if(FlyWheelspeed() >= disspeed){ 
       readyToFire = true;
     } else {
       readyToFire = false;
     }
-
-  
-
-
-
-if (ButtonBoard.getRawButton(4)){
-  Rotation.set(.3);
-} else if(ButtonBoard.getRawButton(5)) {
-  Rotation.set(-.3);
-} else {
-  Rotation.set(0);
-}
-
-
-
-
-if(ButtonBoard.getRawButton(7)){
-  setFlywheelVelocityControl(-19500);
-
-} else {
-  spinFylywheel(0);
-}
-
-
-
-
-
-
-
-  
-
-if(Flywheelspeed() > 19000 && ButtonBoard.getRawButton(8)){
-  startPASS();
-} else{
-  stopPASS();
-}
-
-
-
-
-
-
-
-
-
-
   }
 }
+
+
