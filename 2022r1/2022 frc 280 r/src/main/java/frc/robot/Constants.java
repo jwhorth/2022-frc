@@ -15,16 +15,15 @@ package frc.robot;
 public final class Constants {
     //FIXME These need to be changed when can id's are figured out.
     //Index
-    public static final int Index_Motor_1_CANid = 0;
-    public static final int Index_Motor_2_CANid = 0;    
+    public static final int Index_Motor_CANid = 25;
     public static final int Index_IR_DIOid = 0;
     //Intake
-    public static final int Intake_Motor_CANid = 0;
-    public static final int Intake_Deploy_CANid = 0;
+    public static final int Intake_Motor_CANid = 26;
+    public static final int Intake_Deploy_CANid = 27;
     //Shooter
-    public static final int Shooter_Motor_CANid = 0;
-    public static final int Feed_Motor_CANid = 0;
-    public static final int Rotation_Motor_CANid = 0;
+    public static final int Shooter_Motor_CANid = 22;
+    public static final int Feed_Motor_CANid = 24;
+    public static final int Rotation_Motor_CANid = 23;
     //Climber
 
     //Drive

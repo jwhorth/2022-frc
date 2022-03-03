@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
@@ -31,11 +33,11 @@ public class Shooter_SUB extends SubsystemBase {
 
   Joystick ButtonBoard = new Joystick(5);
 
-  //double turretP = Constants.TURRET_P; FIXME PIDS
-  //double turretD = Constants.TURRET_D;
-  //PIDController turretPIDController = new PIDController(turretP, 0, turretD);
+  double turretP = 0; //FIXME PIDS
+  double turretD = 0;
+  PIDController turretPIDController = new PIDController(turretP, 0, turretD);
 
-
+  private DigitalInput ballCounter;
 
   public double turretCurrentPos;
   public double turretHome = 0; //FIXME change all the numbers for Turret Home and Stops.
@@ -54,8 +56,11 @@ public class Shooter_SUB extends SubsystemBase {
 
   public static int ballCount;
   public static double disspeed; //FIXME define disspeed using the trig thing
+  public static double distanceSpeed;
 
   boolean wasHomeFound = false;
+
+
   
  
   double flywheelP = .05;
@@ -80,19 +85,35 @@ public class Shooter_SUB extends SubsystemBase {
     Flywheel.config_kI(0, flywheelI);
     Flywheel.config_kD(0, flywheelD);
     Flywheel.config_kF(0, flywheelF);
-    /*
-    Rotation.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute);
-    Rotation.getAlternateEncoder(FeedbackDevice.CTRE_MagEncoder_Absolute), countsPerRev)
-    Rotation.configFeedbackNotContinuous(true, 10); // important for absolute encoders not to jump ticks randomly
-    */ //FIXME look up the new functions for CANcoder to the Spark Max
+
+    ballCounter = new DigitalInput(0);  //FIXME CAN IDs NEED TO BE CHANGED.
+    
+    
+    Rotation.getSelectedSensorPosition();
+    //Rotation.configFeedbackNotContinuous(true, 10); //FIXME uncomment if needed for some reason
+     //FIXME look up the new functions for CANcoder to the Spark Max
   }
 
-  
+public void ZeroCount(){
+  if (ballCount < 0){
+    ballCount = 0;
+  }
+}
+
+public boolean getBallCounter(){
+  return !ballCounter.get();
+}  
+
+public void BallMath(){
+  if (getBallCounter() == true){
+    ballCount ++;
+  }
+}
+
+
+
+
 //Turret Flywheels CMDs
-
-
-
-
 
 public double FlyWheelspeed() {
   return Flywheel.getSelectedSensorVelocity();
@@ -167,7 +188,7 @@ public void feedMotorSpeed(double speed){
       spinTurretMotor(0);
     }
   }
-/*
+
   public void track() {
     if (limelightSeesTarget()) {
       double heading_error = -tx + 0.5; // in order to change the target offset (in degrees), add it here
@@ -184,7 +205,7 @@ public void feedMotorSpeed(double speed){
     }
   }
 
-*/ //FIXME uncomment this stuff
+
 public void updateLimelight() {
   table = NetworkTableInstance.getDefault().getTable("limelight");
   tableTx = table.getEntry("tx");
@@ -232,6 +253,7 @@ public Color matchColor() {
     return colorMatchResults.color;
   }
 }
+
 
 
 public double getColorSensorProxmity() {

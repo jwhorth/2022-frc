@@ -6,9 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commandgroups.FireCargo_CMD_G;
 import frc.robot.subsystems.Climb_SUB;
 import frc.robot.subsystems.Drivetrain_SUB;
 import frc.robot.subsystems.Index_SUB;
@@ -31,7 +31,7 @@ public class RobotContainer {
   private final Climb_SUB Climb = new Climb_SUB();
   private final Intake_SUB PickUp = new Intake_SUB();
 
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private final FireCargo_CMD_G m_autoCommand = new FireCargo_CMD_G(Shooter); //FIXME exchange with real command system
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -54,6 +54,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return m_autoCommand; //FIXME exchange with real auto functions
   }
 }

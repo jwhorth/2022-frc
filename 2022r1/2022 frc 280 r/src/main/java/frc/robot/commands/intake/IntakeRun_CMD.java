@@ -7,6 +7,7 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake_SUB;
+import frc.robot.subsystems.Shooter_SUB;
 
 public class IntakeRun_CMD extends CommandBase {
   private final Intake_SUB intake;
@@ -26,12 +27,17 @@ public class IntakeRun_CMD extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intake.SetIntakeRollerspeed(0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    intake.SetIntakeRollerspeed(0);
-    return false;
+    if (Shooter_SUB.ballCount == 2);{
+      intake.SetIntakeRollerspeed(-0.3);
+      return true;
+    }
+    
   }
 }

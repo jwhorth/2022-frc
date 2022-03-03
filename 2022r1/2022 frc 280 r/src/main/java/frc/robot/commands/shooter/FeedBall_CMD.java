@@ -27,7 +27,9 @@ public class FeedBall_CMD extends CommandBase {
   @Override
   public void execute() {
     if(shooter.readyToFire == true){
-      shooter.feedMotorSpeed(.5);}
+      shooter.feedMotorSpeed(.5);
+      Shooter_SUB.ballCount --;
+    }
       else{
         shooter.feedMotorSpeed(0);
       }
