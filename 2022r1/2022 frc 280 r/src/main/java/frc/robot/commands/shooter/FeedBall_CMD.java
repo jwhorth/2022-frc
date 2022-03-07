@@ -5,13 +5,16 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Index_SUB;
 import frc.robot.subsystems.Shooter_SUB;
 
 public class FeedBall_CMD extends CommandBase {
   private final Shooter_SUB shooter;
+  private final Index_SUB index;
   /** Creates a new FeedBall_CMD. */
-  public FeedBall_CMD(Shooter_SUB m_shooter) {
+  public FeedBall_CMD(Shooter_SUB m_shooter, Index_SUB m_index) {
     shooter = m_shooter;
+    index = m_index;
 
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -29,16 +32,20 @@ public class FeedBall_CMD extends CommandBase {
     if(shooter.readyToFire == true){
       shooter.feedMotorSpeed(.5);
       Shooter_SUB.ballCount --;
-    }
+      }
       else{
         shooter.feedMotorSpeed(0);
       }
+
+      index.SetIndexRollerspeed(.5);
     }
   
-
+    
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    index.SetIndexRollerspeed(0);
+  }
 
   // Returns true when the command should end.
   @Override

@@ -57,6 +57,8 @@ public class Shooter_SUB extends SubsystemBase {
   public static int ballCount;
   public static double disspeed; //FIXME define disspeed using the trig thing
   public static double distanceSpeed;
+  public static double testingrpm;
+  
 
   boolean wasHomeFound = false;
 
