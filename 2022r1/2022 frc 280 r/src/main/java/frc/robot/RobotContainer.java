@@ -5,15 +5,20 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commandgroups.FireCargo_CMD_G;
+import frc.robot.commands.aTESTING.TestingSpinFlywheel_CMD;
 import frc.robot.subsystems.Climb_SUB;
 import frc.robot.subsystems.Drivetrain_SUB;
 import frc.robot.subsystems.Index_SUB;
 import frc.robot.subsystems.Shooter_SUB;
 import frc.robot.subsystems.Intake_SUB;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
 /**
@@ -31,10 +36,27 @@ public class RobotContainer {
   private final Climb_SUB Climb = new Climb_SUB();
   private final Intake_SUB PickUp = new Intake_SUB();
 
+  
   private final FireCargo_CMD_G m_autoCommand = new FireCargo_CMD_G(Shooter,Index); //FIXME exchange with real command system
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    Joystick operatorJoy = new Joystick(1);
+    Joystick Joy1 = new Joystick(2);
+    JoystickButton b1 = new JoystickButton(operatorJoy, 1);
+    JoystickButton b2 = new JoystickButton(operatorJoy, 2);
+    JoystickButton b3 = new JoystickButton(operatorJoy, 3);
+    JoystickButton b4 = new JoystickButton(operatorJoy, 4);
+    JoystickButton b5 = new JoystickButton(operatorJoy, 5);
+    JoystickButton b6 = new JoystickButton(operatorJoy, 6);
+    JoystickButton b7 = new JoystickButton(operatorJoy, 7);
+    JoystickButton b8 = new JoystickButton(operatorJoy, 8);
+    JoystickButton b9 = new JoystickButton(operatorJoy, 9);
+    JoystickButton b10 = new JoystickButton(operatorJoy, 10);
+    JoystickButton b11 = new JoystickButton(operatorJoy, 11);
+    JoystickButton b12 = new JoystickButton(operatorJoy, 12);
+    JoystickButton b13 = new JoystickButton(Joy1, 1);
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -46,9 +68,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    button.
-  }
+    b1.whenPressed(new TestingSpinFlywheel_CMD(Shooter, 100));
+    SpinFlywheel.whenActive(new TestingSpinFlywheel_CMD(Shooter, 100));
 
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -58,4 +81,16 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     return m_autoCommand; //FIXME exchange with real auto functions
   }
+
+  Trigger SpinFlywheel = new Trigger() {
+    @Override
+    public boolean get() {
+      return b1.get();
+  } };
+
+  
 }
+
+  
+  
+  
