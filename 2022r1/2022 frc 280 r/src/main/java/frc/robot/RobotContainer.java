@@ -11,15 +11,22 @@ import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commandgroups.FireCargo_CMD_G;
 import frc.robot.commands.aTESTING.TestingSpinFlywheel_CMD;
+import frc.robot.commands.index.IndexRun_CMD;
+import frc.robot.commands.intake.IntakeDeploy_CMD;
+import frc.robot.commands.intake.IntakeRetract_CMD;
+import frc.robot.commands.intake.IntakeRun_CMD;
+import frc.robot.commands.shooter.FeedBall_CMD;
+import frc.robot.commands.shooter.LimelightLight_CMD;
+import frc.robot.commands.turret.SeekHome_CMD;
+import frc.robot.commands.turret.TestTurnTurretLeft_CMD;
+import frc.robot.commands.turret.TestTurnTurretRight_CMD;
+import frc.robot.commands.turret.TrackTarget_CMD;
 import frc.robot.subsystems.Climb_SUB;
 import frc.robot.subsystems.Drivetrain_SUB;
 import frc.robot.subsystems.Index_SUB;
 import frc.robot.subsystems.Shooter_SUB;
 import frc.robot.subsystems.Intake_SUB;
-import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,14 +41,8 @@ public class RobotContainer {
   private final Index_SUB Index = new Index_SUB();
   private final Shooter_SUB Shooter = new Shooter_SUB();
   private final Climb_SUB Climb = new Climb_SUB();
-  private final Intake_SUB PickUp = new Intake_SUB();
-
-  
-  private final FireCargo_CMD_G m_autoCommand = new FireCargo_CMD_G(Shooter,Index); //FIXME exchange with real command system
-
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    Joystick operatorJoy = new Joystick(1);
+  private final Intake_SUB Intake = new Intake_SUB();
+  Joystick operatorJoy = new Joystick(1);
     Joystick Joy1 = new Joystick(2);
     JoystickButton b1 = new JoystickButton(operatorJoy, 1);
     JoystickButton b2 = new JoystickButton(operatorJoy, 2);
@@ -57,6 +58,13 @@ public class RobotContainer {
     JoystickButton b12 = new JoystickButton(operatorJoy, 12);
     JoystickButton b13 = new JoystickButton(Joy1, 1);
 
+  
+  private final FireCargo_CMD_G m_autoCommand = new FireCargo_CMD_G(Shooter,Index); //FIXME exchange with real command system
+
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public RobotContainer() {
+    
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -68,8 +76,29 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    b1.whenPressed(new TestingSpinFlywheel_CMD(Shooter, 100));
-    SpinFlywheel.whenActive(new TestingSpinFlywheel_CMD(Shooter, 100));
+    b1.whenPressed(new TestingSpinFlywheel_CMD(Shooter, 10000)); 
+    
+    b2.whenPressed(new TestingSpinFlywheel_CMD(Shooter, 20000)); //FIXME
+
+    b3.whenPressed(new IndexRun_CMD(Index));
+
+    b4.whenPressed(new IntakeDeploy_CMD(Intake));
+
+    b5.whenPressed(new IntakeRetract_CMD(Intake));
+
+    b6.whenPressed(new IntakeRun_CMD(Intake));
+
+    b7.whenPressed(new FeedBall_CMD(Shooter, Index));
+
+    b8.whenPressed(new LimelightLight_CMD(Shooter)); //FIXME
+
+    b9.whenPressed(new SeekHome_CMD(Shooter)); //FIXME
+
+    b10.whenPressed(new TestTurnTurretLeft_CMD(Shooter));
+
+    b11.whenPressed(new TestTurnTurretRight_CMD(Shooter));
+
+    b12.whenPressed(new TrackTarget_CMD(Shooter)); //FIXME
 
   }
   /**
@@ -82,11 +111,7 @@ public class RobotContainer {
     return m_autoCommand; //FIXME exchange with real auto functions
   }
 
-  Trigger SpinFlywheel = new Trigger() {
-    @Override
-    public boolean get() {
-      return b1.get();
-  } };
+
 
   
 }

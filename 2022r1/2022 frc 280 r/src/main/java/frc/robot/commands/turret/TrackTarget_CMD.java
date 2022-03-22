@@ -22,8 +22,7 @@ public class TrackTarget_CMD extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //shooter.track(); FIXME FIX when we fix the code in the sub
-  }
+    shooter.track(); }
 
   // Called once the command ends or is interrupted.
   @Override

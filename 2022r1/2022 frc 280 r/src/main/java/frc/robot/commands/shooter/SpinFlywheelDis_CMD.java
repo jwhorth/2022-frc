@@ -26,7 +26,7 @@ public class SpinFlywheelDis_CMD extends CommandBase {
   @Override
   public void execute() {
     if (shooter.isMyAllianceColor(colormatched)){
-    shooter.SetFlywheelVelocityControl(Shooter_SUB.distanceSpeed);
+    shooter.SetFlywheelVelocityControl(2000);
     }
     else {
       shooter.SpinFlywheel(.2); //FIXME fix the speed after testing

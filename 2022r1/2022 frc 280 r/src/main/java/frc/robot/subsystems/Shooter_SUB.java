@@ -22,6 +22,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
+import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.Constants;
 
@@ -70,7 +71,7 @@ public class Shooter_SUB extends SubsystemBase {
   double flywheelD = 0;
   double flywheelF = 0.05;
   
-  private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  private final I2C.Port i2cPort = I2C.Port.kMXP;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
   private final Color kBlueTarget = new Color(0.25, 0.29, 0.45);
   private final Color kRedTarget = new Color(0.60, 0.32, 0.07);
