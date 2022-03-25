@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -27,4 +30,43 @@ public final class Constants {
     //Climber
 
     //Drive
+    /**
+     * The left-to-right distance between the drivetrain wheels
+     *
+     * Should be measured from center to center.
+     */
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.5715; // Measure and set trackwidth
+    /**
+     * The front-to-back distance between the drivetrain wheels.
+     *
+     * Should be measured from center to center.
+     */
+    public static final double DRIVETRAIN_WHEELBASE_METERS = 0.4953; // Measure and set wheelbase
+
+    public static final int DRIVETRAIN_PIGEON_ID = 0; //  Set Pigeon ID
+
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 11; // Set front left module drive motor ID
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 12; // Set front left module steer motor ID
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1; //Set front left steer encoder ID
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(137.45269775390625); // FIXME Measure and set front left steer offset
+
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 13; // Set front right drive motor ID
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 14; // Set front right steer motor ID
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 2; //Set front right steer encoder ID
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(24.609375); // FIXME Measure and set front right steer offset
+
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 15; // Set back left drive motor ID
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 16; // Set back left steer motor ID
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 3; //Set back left steer encoder ID
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(31.7230224609375); // FIXME Measure and set back left steer offset
+
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 17; // Set back right drive motor ID
+    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 18; // Set back right steer motor ID
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 4; //Set back right steer encoder ID
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(332.13043212890625); // FIXME Measure and set back right steer offset
+
+
+
+    public static final ShuffleboardTab SORTER_TAB = Shuffleboard.getTab("Sorter");
+    public static final ShuffleboardTab PRIMARY_TAB = Shuffleboard.getTab("Primary");
 }

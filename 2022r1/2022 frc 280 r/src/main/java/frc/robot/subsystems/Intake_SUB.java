@@ -7,13 +7,13 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake_SUB extends SubsystemBase {
-  WPI_TalonSRX intakeMotor = new WPI_TalonSRX(0);
-  WPI_TalonSRX intakeDeploy = new WPI_TalonSRX(0);
-  DutyCycleEncoder intakePositionEncoder = new DutyCycleEncoder(1);
+  WPI_TalonSRX intakeMotor = new WPI_TalonSRX(26);
+  WPI_TalonSRX intakeDeploy = new WPI_TalonSRX(27);
+  DutyCycleEncoder pivotPositionEncoder = new DutyCycleEncoder(1);
 
   
 
@@ -33,8 +33,8 @@ public class Intake_SUB extends SubsystemBase {
     intakeDeploy.set(speed);
   }
 
-  public double getIntakeDeployPosition() {
-    return intakePositionEncoder.get();
+  public double getPivotDeployPosition() {
+    return pivotPositionEncoder.get();
   }
 
  
@@ -47,6 +47,7 @@ public class Intake_SUB extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Encoder Position", getPivotDeployPosition());
 
 
     

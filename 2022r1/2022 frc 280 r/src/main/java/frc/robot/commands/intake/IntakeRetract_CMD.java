@@ -26,12 +26,10 @@ public class IntakeRetract_CMD extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
+    intake.setIntakeDeploySpeed(0);
   }
+
 
   // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false; //FIXME ADD A THING TO STOP THE MOTORS WHEN WE FIGURE THAT OUT.
-  }
+  
 }

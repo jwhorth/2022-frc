@@ -20,17 +20,17 @@ public class IndexRun_CMD extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    index.SetIndexRollerspeed(.5); //FIXME The speed is subject to change.(FIX BEFORE USING)
+    index.SetIndexRollerspeed(1); //FIXME The speed is subject to change.(FIX BEFORE USING)
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
+  public void end(boolean interrupted) {
     index.SetIndexRollerspeed(0);
-    return false;
+
+
   }
+
+  
+ 
 }

@@ -22,6 +22,8 @@ public class FeedBall_CMD extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooter.feedMotorSpeed(-1);
+    index.SetIndexRollerspeed(1);
     
     
   }
@@ -29,6 +31,9 @@ public class FeedBall_CMD extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
+    /*
+    
     if(shooter.readyToFire == true){
       shooter.feedMotorSpeed(.5);
       Shooter_SUB.ballCount --;
@@ -38,20 +43,17 @@ public class FeedBall_CMD extends CommandBase {
       }
 
       index.SetIndexRollerspeed(.5);
+      */
     }
   
     
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    index.SetIndexRollerspeed(0);
+    shooter.feedMotorSpeed(0);
+    
   }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    if(Shooter_SUB.ballCount == 0);{
-      return true;
-    }
-  }
+  
+  
 }

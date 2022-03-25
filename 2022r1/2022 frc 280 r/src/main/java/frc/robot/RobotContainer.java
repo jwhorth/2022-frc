@@ -7,10 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commandgroups.FireCargo_CMD_G;
+import frc.robot.commandgroups.PickupCargo_CMD_G;
 import frc.robot.commands.aTESTING.TestingSpinFlywheel_CMD;
+import frc.robot.commands.drive.DefaultDriveCommand;
 import frc.robot.commands.index.IndexRun_CMD;
 import frc.robot.commands.intake.IntakeDeploy_CMD;
 import frc.robot.commands.intake.IntakeRetract_CMD;
@@ -22,7 +24,7 @@ import frc.robot.commands.turret.TestTurnTurretLeft_CMD;
 import frc.robot.commands.turret.TestTurnTurretRight_CMD;
 import frc.robot.commands.turret.TrackTarget_CMD;
 import frc.robot.subsystems.Climb_SUB;
-import frc.robot.subsystems.Drivetrain_SUB;
+import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Index_SUB;
 import frc.robot.subsystems.Shooter_SUB;
 import frc.robot.subsystems.Intake_SUB;
@@ -36,14 +38,17 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  private final Drivetrain_SUB Drivetrain = new Drivetrain_SUB();
+  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final Index_SUB Index = new Index_SUB();
   private final Shooter_SUB Shooter = new Shooter_SUB();
   private final Climb_SUB Climb = new Climb_SUB();
   private final Intake_SUB Intake = new Intake_SUB();
-  Joystick operatorJoy = new Joystick(1);
-    Joystick Joy1 = new Joystick(2);
+  public double ballCount;
+  Joystick driveMovement = new Joystick(0);
+  Joystick driveRotation = new Joystick(1);
+  Joystick operatorJoy = new Joystick(2);
+  Joystick driverButtons = new Joystick(3);
+    
     JoystickButton b1 = new JoystickButton(operatorJoy, 1);
     JoystickButton b2 = new JoystickButton(operatorJoy, 2);
     JoystickButton b3 = new JoystickButton(operatorJoy, 3);
@@ -56,13 +61,28 @@ public class RobotContainer {
     JoystickButton b10 = new JoystickButton(operatorJoy, 10);
     JoystickButton b11 = new JoystickButton(operatorJoy, 11);
     JoystickButton b12 = new JoystickButton(operatorJoy, 12);
-    JoystickButton b13 = new JoystickButton(Joy1, 1);
+    JoystickButton dB1 = new JoystickButton(driverButtons, 1);
+    
 
   
   private final FireCargo_CMD_G m_autoCommand = new FireCargo_CMD_G(Shooter,Index); //FIXME exchange with real command system
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    // Set up the default command for the drivetrain.
+    // The controls are for field-oriented driving:
+    // Left stick Y axis -> forward and backwards movement
+    // Left stick X axis -> left and right movement
+    // Right stick X axis -> rotation
+    
+    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+      m_drivetrainSubsystem,
+      () -> -modifyAxis(driveMovement.getX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+      () -> -modifyAxis(driveMovement.getY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+      () -> -modifyAxis(driveRotation.getX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+));
+
     
 
     // Configure the button bindings
@@ -76,29 +96,27 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    b1.whenPressed(new TestingSpinFlywheel_CMD(Shooter, 10000)); 
     
-    b2.whenPressed(new TestingSpinFlywheel_CMD(Shooter, 20000)); //FIXME
+    b1.toggleWhenPressed(new PickupCargo_CMD_G(Index, Intake));
+    
+    b2.toggleWhenPressed(new TestingSpinFlywheel_CMD(Shooter,9700)); //FIXME
 
-    b3.whenPressed(new IndexRun_CMD(Index));
+    b3.whenHeld(new FeedBall_CMD(Shooter, Index));
 
-    b4.whenPressed(new IntakeDeploy_CMD(Intake));
 
-    b5.whenPressed(new IntakeRetract_CMD(Intake));
+    b4.whenHeld(new IntakeDeploy_CMD(Intake));
 
-    b6.whenPressed(new IntakeRun_CMD(Intake));
-
-    b7.whenPressed(new FeedBall_CMD(Shooter, Index));
+    b5.whenHeld(new IntakeRetract_CMD(Intake));
 
     b8.whenPressed(new LimelightLight_CMD(Shooter)); //FIXME
 
-    b9.whenPressed(new SeekHome_CMD(Shooter)); //FIXME
+    b9.whenHeld(new TestTurnTurretLeft_CMD(Shooter));
 
-    b10.whenPressed(new TestTurnTurretLeft_CMD(Shooter));
+    b10.whenHeld(new TestTurnTurretRight_CMD(Shooter));
+    
+    dB1.whenPressed(m_drivetrainSubsystem::zeroGyroscope);
 
-    b11.whenPressed(new TestTurnTurretRight_CMD(Shooter));
-
-    b12.whenPressed(new TrackTarget_CMD(Shooter)); //FIXME
+   
 
   }
   /**
@@ -110,7 +128,27 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     return m_autoCommand; //FIXME exchange with real auto functions
   }
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      if (value > 0.0) {
+        return (value - deadband) / (1.0 - deadband);
+      } else {
+        return (value + deadband) / (1.0 - deadband);
+      }
+    } else {
+      return 0.0;
+    }
+  }
 
+  private static double modifyAxis(double value) {
+    // Deadband
+    value = deadband(value, 0.05);
+
+    // Square the axis
+    value = Math.copySign(value * value, value);
+
+    return value;
+  }
 
 
   

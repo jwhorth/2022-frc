@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -27,9 +31,9 @@ import com.kauailabs.navx.frc.AHRS;
 import frc.robot.Constants;
 
 public class Shooter_SUB extends SubsystemBase {
-  WPI_TalonFX Flywheel = new WPI_TalonFX(0); //FIXME Change ID Numbers
-  WPI_TalonFX Rotation = new WPI_TalonFX(0);
-  WPI_TalonSRX Feedmotor = new WPI_TalonSRX(0);
+  WPI_TalonFX Flywheel = new WPI_TalonFX(22); 
+  WPI_TalonFX Rotation = new WPI_TalonFX(23);
+  WPI_TalonSRX Feedmotor = new WPI_TalonSRX(24);
   
 
   Joystick ButtonBoard = new Joystick(5);
@@ -66,7 +70,7 @@ public class Shooter_SUB extends SubsystemBase {
 
   
  
-  double flywheelP = .05;
+  double flywheelP = .35;
   double flywheelI = 0;
   double flywheelD = 0;
   double flywheelF = 0.05;
@@ -77,6 +81,12 @@ public class Shooter_SUB extends SubsystemBase {
   private final Color kRedTarget = new Color(0.60, 0.32, 0.07);
   private final Alliance alliance;
   private final ColorMatch m_colorMatcher = new ColorMatch();
+  private NetworkTableEntry detectedColorGraphNT;
+  private NetworkTableEntry detectedColorNT;
+  
+
+  public NetworkTableEntry hits;
+  public NetworkTableEntry miss;
 
 
   /** Creates a new Shooter. */
@@ -97,6 +107,8 @@ public class Shooter_SUB extends SubsystemBase {
      //FIXME look up the new functions for CANcoder to the Spark Max
   }
 
+
+//Ball Math
 public void ZeroCount(){
   if (ballCount < 0){
     ballCount = 0;
@@ -104,19 +116,17 @@ public void ZeroCount(){
 }
 
 public boolean getBallCounter(){
-  return !ballCounter.get();
+  return ballCounter.get();
 }  
 
 public void BallMath(){
-  if (getBallCounter() == true){
+  if (getBallCounter() == false){
     ballCount ++;
   }
 }
 
 
-
-
-//Turret Flywheels CMDs
+//Turret Flywheels 
 
 public double FlyWheelspeed() {
   return Flywheel.getSelectedSensorVelocity();
@@ -126,7 +136,6 @@ public void SpinFlywheel(double speed) {
   Flywheel.set(speed);
 }
 
-
 public void SetFlywheelVelocityControl(double rpm) {
   Flywheel.set(ControlMode.Velocity, rpm);
 
@@ -134,7 +143,7 @@ public void SetFlywheelVelocityControl(double rpm) {
 
 
 
-// Turret Rotation CMDs
+// Turret Rotation
 public void spinTurretMotor(double speed) {
   if (goLeft && speed < 0) {
     Rotation.set(speed);
@@ -145,15 +154,14 @@ public void spinTurretMotor(double speed) {
   }
 }
 
-//
 public double turretDistFromHome() {
-  return Math.abs(turretCurrentPos - turretHome);
+return Math.abs(turretCurrentPos - turretHome);
 }
-  //
+
 public double getTurretTicks() {
   return Rotation.getSelectedSensorPosition();  //FIXME Replace with the new functions for CANcoder
 }
-//
+
 public void hardStopConfiguration() {   //FIXME Replace with the new functions for CANcoder
 
   if (Rotation.getSelectedSensorPosition() > turretRightStop) {
@@ -173,14 +181,14 @@ public void hardStopConfiguration() {   //FIXME Replace with the new functions f
 }
 
 
-//Feed Motor CMDs
+//Feed Motor
 public void feedMotorSpeed(double speed){
   Feedmotor.set(speed);
 }
 
-  // Tracking CMDs
+//Tracking
 
-  public void goHome() {
+public void goHome() {
     if ((turretCurrentPos > turretHome) && (turretCurrentPos - turretHome > 50)) {
       // If you're to the right of the center, move left until you're within 50 ticks (turret deadband)
       spinTurretMotor(0.3);
@@ -192,7 +200,7 @@ public void feedMotorSpeed(double speed){
     }
   }
 
-  public void track() {
+public void track() {
     if (limelightSeesTarget()) {
       double heading_error = -tx + 0.5; // in order to change the target offset (in degrees), add it here
       // How much the limelight is looking away from the target (in degrees)
@@ -208,7 +216,6 @@ public void feedMotorSpeed(double speed){
     }
   }
 
-
 public void updateLimelight() {
   table = NetworkTableInstance.getDefault().getTable("limelight");
   tableTx = table.getEntry("tx");
@@ -219,11 +226,9 @@ public void updateLimelight() {
   tv = tableTv.getDouble(-1);
 }
  
-//
 public boolean limelightSeesTarget() {
   return tv == 1;
 }
-//
 
 public String isTarget() {
   if (limelightSeesTarget()) {
@@ -232,6 +237,7 @@ public String isTarget() {
   return "NO TARGET";
 }
 
+//Color Stuff
 private void configureColorMatcher() {
   m_colorMatcher.addColorMatch(kBlueTarget);
   m_colorMatcher.addColorMatch(kRedTarget);
@@ -257,11 +263,34 @@ public Color matchColor() {
   }
 }
 
-
-
 public double getColorSensorProxmity() {
   return m_colorSensor.getProximity();
 }
+
+public void sendDetectedColorToShuffleBoard(Color color) {
+  if (color == kRedTarget) {
+    detectedColorNT.setString("Red");
+    detectedColorGraphNT.setNumber(1);
+  } else if (color == kBlueTarget) {
+    detectedColorNT.setString("Blue");
+    detectedColorGraphNT.setNumber(-1);
+  } else {
+    detectedColorNT.setString("Null");
+    detectedColorGraphNT.setNumber(0);
+  }
+}
+private void configureShuffleBoard() {
+  ShuffleboardLayout layout = Constants.PRIMARY_TAB.getLayout("Sorter", BuiltInLayouts.kList).withSize(2, 3);
+  layout.add("Sorter command", this);
+  detectedColorNT = layout.add("Detected color", "").getEntry();
+
+  detectedColorGraphNT = Constants.SORTER_TAB.add("DetectedColorGraph", 0).withWidget(BuiltInWidgets.kGraph).getEntry();
+  hits = Constants.SORTER_TAB.add("Hit", 0).getEntry();
+  miss = Constants.SORTER_TAB.add("Miss", 0).getEntry();
+}
+
+
+
 
 //
   @Override
@@ -272,10 +301,16 @@ public double getColorSensorProxmity() {
     //hardStopConfiguration();
     turretCurrentPos = Rotation.getSelectedSensorPosition();  //FIXME Replace with the new functions for CANcoder
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-    System.out.println(FlyWheelspeed());
+    BallMath();
+    SmartDashboard.putNumber("Current Turret Encoder Position", getTurretTicks());
+    SmartDashboard.putNumber("Flywheel RPM", FlyWheelspeed());
+    SmartDashboard.putNumber("Ball Count", ballCount);
+    SmartDashboard.putBoolean("Ready to Fire?", readyToFire);
+  
 
+  
 
-    if(FlyWheelspeed() >= disspeed){ 
+    if(FlyWheelspeed() >= 19000){ 
       readyToFire = true;
     } else {
       readyToFire = false;
