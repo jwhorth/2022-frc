@@ -51,6 +51,7 @@ public class FeedBall_CMD extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     shooter.feedMotorSpeed(0);
+    index.SetIndexRollerspeed(0);
     
   }
 
